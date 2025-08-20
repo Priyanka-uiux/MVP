@@ -13,6 +13,7 @@ export default function UserDetailsForm() {
   });
 
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
   const validate = () => {
     let newErrors = {};
@@ -40,8 +41,9 @@ export default function UserDetailsForm() {
       return;
     }
 
+    setSubmitting(true); // Disable button while submitting
+
     try {
-      // ✅ Send to Formspree
       const res = await fetch("https://formspree.io/f/xzzvyqwa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -52,24 +54,25 @@ export default function UserDetailsForm() {
         throw new Error("Formspree submission failed");
       }
 
-      // ✅ Save data locally (use localStorage for consistency with App.js)
+      // Save data locally
       localStorage.setItem("userData", JSON.stringify(formData));
       localStorage.setItem("formCompleted", "true");
 
-      // ✅ Go to disclaimer
+      // Navigate to disclaimer page
       navigate("/disclaimer");
-
     } catch (err) {
       console.error(err);
       alert("Error submitting form. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#080029]">
+    <div className="min-h-screen bg-[#080029] flex flex-col items-center justify-start">
       <img src={logo} alt="Logo" className="w-[250px] p-5" />
-      <div className="flex flex-col gap-[30px] items-center justify-center py-5">
-        <div className="border-[#33cae5] border-[2px] w-[100%] md:w-[60%] p-8 shadow-lg rounded-[30px] bg-white">
+      <div className="flex flex-col gap-[30px] items-center justify-center py-5 w-full md:w-[60%]">
+        <div className="border-[#33cae5] border-[2px] p-8 shadow-lg rounded-[30px] bg-white w-full">
           <h1 className="text-[50px] font-bold text-[#33cae5] text-center mb-1">
             Welcome to EthiAI
           </h1>
@@ -80,65 +83,54 @@ export default function UserDetailsForm() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Name */}
             <div>
-              <label className="block mb-1 font-semibold text-[#080029]">
-                Name
-              </label>
+              <label className="block mb-1 font-semibold text-[#080029]">Name</label>
               <input
                 type="text"
                 name="name"
-                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your full name"
+                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
               />
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name}</p>
-              )}
+              {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
             </div>
 
             {/* Email */}
             <div>
-              <label className="block mb-1 font-semibold text-[#080029]">
-                Email
-              </label>
+              <label className="block mb-1 font-semibold text-[#080029]">Email</label>
               <input
                 type="email"
                 name="email"
-                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
+                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
               />
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email}</p>
-              )}
+              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
             </div>
 
             {/* Organisation */}
             <div>
-              <label className="block mb-1 font-semibold text-[#080029]">
-                Organisation
-              </label>
+              <label className="block mb-1 font-semibold text-[#080029]">Organisation</label>
               <input
                 type="text"
                 name="organisation"
-                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
                 value={formData.organisation}
                 onChange={handleChange}
                 placeholder="Enter your organisation name"
+                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
               />
-              {errors.organisation && (
-                <p className="text-red-500 text-sm">{errors.organisation}</p>
-              )}
+              {errors.organisation && <p className="text-red-500 text-sm">{errors.organisation}</p>}
             </div>
 
             {/* Submit */}
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="border-2 border-[#33cae5] text-white bg-[#33cae5] py-3 px-6 rounded-lg hover:!text-[#080029] hover:!bg-white hover:shadow-lg hover:scale-105 transition-all duration-300"
+                disabled={submitting}
+                className="border-2 border-[#33cae5] text-white bg-[#33cae5] py-3 px-6 rounded-lg hover:!text-[#080029] hover:!bg-white hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-50"
               >
-                Submit & Continue
+                {submitting ? "Submitting..." : "Submit & Continue"}
               </button>
             </div>
           </form>
