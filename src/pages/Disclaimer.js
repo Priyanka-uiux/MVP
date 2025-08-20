@@ -7,11 +7,11 @@ export default function Disclaimer() {
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
 
-  // Prevent skipping Disclaimer by checking if user filled details
+  // ✅ Prevent skipping Disclaimer by checking if user filled details
   useEffect(() => {
     const userData = JSON.parse(sessionStorage.getItem("userData")); // session-based
     if (!userData) {
-      navigate("/UserDetailsForm");
+      navigate("/"); // ✅ go back to form ("/") not "/UserDetailsForm"
     }
   }, [navigate]);
 
@@ -20,7 +20,7 @@ export default function Disclaimer() {
   };
 
   const handleProceed = () => {
-    navigate("/assessment");
+    navigate("/assessment"); // ✅ move to assessment page
   };
 
   return (

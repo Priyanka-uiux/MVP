@@ -13,7 +13,7 @@ const DownloadReport = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { riskScore, quizLength, allComments } = location.state || {};
-  const [previewUrl, setPreviewUrl] = useState(null);
+  
 
   const percentage = Math.round((riskScore / Math.max(quizLength, 1)) * 100);
 
