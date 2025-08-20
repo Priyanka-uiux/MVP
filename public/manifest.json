@@ -12,5 +12,7 @@
   "theme_color": "#0d1117",
   "background_color": "#ffffff",
   "orientation": "portrait",
-  "description": "Frontend for EthiAI MVP deployed on Vercel"
+  "description": "Frontend for EthiAI MVP deployed on Vercel",
+  "related_applications": [],
+  "prefer_related_applications": false
 }
