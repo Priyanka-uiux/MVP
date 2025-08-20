@@ -22,7 +22,8 @@ export default function UserDetailsForm() {
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    if (!formData.organisation.trim()) newErrors.organisation = "Organisation is required";
+    if (!formData.organisation.trim())
+      newErrors.organisation = "Organisation is required";
     return newErrors;
   };
 
@@ -40,7 +41,7 @@ export default function UserDetailsForm() {
     }
 
     try {
-      // Send to Formspree
+      // ✅ Send to Formspree
       const res = await fetch("https://formspree.io/f/xzzvyqwa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,11 +52,11 @@ export default function UserDetailsForm() {
         throw new Error("Formspree submission failed");
       }
 
-      // Save data locally
-      sessionStorage.setItem("userData", JSON.stringify(formData));
-      sessionStorage.setItem("formCompleted", "true");
+      // ✅ Save data locally (use localStorage for consistency with App.js)
+      localStorage.setItem("userData", JSON.stringify(formData));
+      localStorage.setItem("formCompleted", "true");
 
-      // Go to disclaimer every time after form
+      // ✅ Go to disclaimer
       navigate("/disclaimer");
 
     } catch (err) {
@@ -79,7 +80,9 @@ export default function UserDetailsForm() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Name */}
             <div>
-              <label className="block mb-1 font-semibold text-[#080029]">Name</label>
+              <label className="block mb-1 font-semibold text-[#080029]">
+                Name
+              </label>
               <input
                 type="text"
                 name="name"
@@ -88,12 +91,16 @@ export default function UserDetailsForm() {
                 onChange={handleChange}
                 placeholder="Enter your full name"
               />
-              {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name}</p>
+              )}
             </div>
 
             {/* Email */}
             <div>
-              <label className="block mb-1 font-semibold text-[#080029]">Email</label>
+              <label className="block mb-1 font-semibold text-[#080029]">
+                Email
+              </label>
               <input
                 type="email"
                 name="email"
@@ -102,12 +109,16 @@ export default function UserDetailsForm() {
                 onChange={handleChange}
                 placeholder="Enter your email"
               />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email}</p>
+              )}
             </div>
 
             {/* Organisation */}
             <div>
-              <label className="block mb-1 font-semibold text-[#080029]">Organisation</label>
+              <label className="block mb-1 font-semibold text-[#080029]">
+                Organisation
+              </label>
               <input
                 type="text"
                 name="organisation"
@@ -116,7 +127,9 @@ export default function UserDetailsForm() {
                 onChange={handleChange}
                 placeholder="Enter your organisation name"
               />
-              {errors.organisation && <p className="text-red-500 text-sm">{errors.organisation}</p>}
+              {errors.organisation && (
+                <p className="text-red-500 text-sm">{errors.organisation}</p>
+              )}
             </div>
 
             {/* Submit */}

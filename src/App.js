@@ -10,10 +10,11 @@ import UserForm from "./pages/UserForm";
 import Assessment from "./pages/Assessment";
 import Disclaimer from "./pages/Disclaimer";
 import Evaluation from "./pages/Evaluation";
-import DownloadReport from "./pages/DownloadReport"; // ✅ New import
+import DownloadReport from "./pages/DownloadReport";
 import ThankYou from "./pages/ThankYou";
 import Sidebar from "./components/Sidebar";
 
+// ✅ Layout with sidebar logic
 const Layout = ({ children }) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -42,12 +43,10 @@ const Layout = ({ children }) => {
   );
 };
 
-// Protect /disclaimer route
+// ✅ Protect disclaimer if form not filled
 const ProtectedDisclaimer = ({ children }) => {
   const formCompleted = localStorage.getItem("formCompleted") === "true";
-
   if (!formCompleted) {
-    // Redirect to home if form not completed
     return <Navigate to="/" replace />;
   }
   return children;
@@ -58,8 +57,10 @@ function App() {
     <Router>
       <Layout>
         <Routes>
-          {/* Start with UserDetailsForm */}
+          {/* Step 1: User Form */}
           <Route path="/" element={<UserForm />} />
+
+          {/* Step 2: Disclaimer (protected by form completion) */}
           <Route
             path="/disclaimer"
             element={
@@ -68,11 +69,20 @@ function App() {
               </ProtectedDisclaimer>
             }
           />
+
+          {/* Step 3: Assessment */}
           <Route path="/assessment" element={<Assessment />} />
+
+          {/* Step 4: Evaluation */}
           <Route path="/evaluation" element={<Evaluation />} />
-          <Route path="/download-report" element={<DownloadReport />} /> {/* ✅ New route */}
+
+          {/* Step 5: Download Report */}
+          <Route path="/download-report" element={<DownloadReport />} />
+
+          {/* Step 6: Thank You */}
           <Route path="/thankyou" element={<ThankYou />} />
-          {/* If route not found, redirect to home */}
+
+          {/* Catch-all → redirect to form */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>
