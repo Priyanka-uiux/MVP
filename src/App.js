@@ -10,7 +10,7 @@ import UserForm from "./pages/UserForm";
 import Assessment from "./pages/Assessment";
 import Disclaimer from "./pages/Disclaimer";
 import Evaluation from "./pages/Evaluation";
-import DownloadReport from "./pages/DownloadReport"; // ✅ New import
+import DownloadReport from "./pages/DownloadReport"; // ✅
 import ThankYou from "./pages/ThankYou";
 import Sidebar from "./components/Sidebar";
 
@@ -18,7 +18,7 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Show sidebar only on evaluation page
+  // ✅ Show sidebar only on evaluation page
   const showSidebar = location.pathname === "/evaluation";
 
   useEffect(() => {
@@ -42,12 +42,11 @@ const Layout = ({ children }) => {
   );
 };
 
-// Protect /disclaimer route
+// ✅ Protect Disclaimer
 const ProtectedDisclaimer = ({ children }) => {
   const formCompleted = localStorage.getItem("formCompleted") === "true";
 
   if (!formCompleted) {
-    // Redirect to home if form not completed
     return <Navigate to="/" replace />;
   }
   return children;
@@ -56,9 +55,9 @@ const ProtectedDisclaimer = ({ children }) => {
 function App() {
   return (
     <Router>
+      {/* ✅ Router wraps everything FIRST */}
       <Layout>
         <Routes>
-          {/* Start with UserDetailsForm */}
           <Route path="/" element={<UserForm />} />
           <Route
             path="/disclaimer"
@@ -70,9 +69,9 @@ function App() {
           />
           <Route path="/assessment" element={<Assessment />} />
           <Route path="/evaluation" element={<Evaluation />} />
-          <Route path="/download-report" element={<DownloadReport />} /> {/* ✅ New route */}
+          <Route path="/download-report" element={<DownloadReport />} /> {/* ✅ */}
           <Route path="/thankyou" element={<ThankYou />} />
-          {/* If route not found, redirect to home */}
+          {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>
