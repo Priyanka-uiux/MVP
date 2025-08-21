@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -6,11 +7,11 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
-import UserForm from "./pages/UserForm";
+import UserForm from "./pages/UserForm"; // ✅ fixed import
 import Assessment from "./pages/Assessment";
 import Disclaimer from "./pages/Disclaimer";
 import Evaluation from "./pages/Evaluation";
-import DownloadReport from "./pages/DownloadReport"; // ✅
+import DownloadReport from "./pages/DownloadReport";
 import ThankYou from "./pages/ThankYou";
 import Sidebar from "./components/Sidebar";
 
@@ -44,7 +45,7 @@ const Layout = ({ children }) => {
 
 // ✅ Protect Disclaimer
 const ProtectedDisclaimer = ({ children }) => {
-  const formCompleted = localStorage.getItem("formCompleted") === "true";
+  const formCompleted = sessionStorage.getItem("formCompleted") === "true"; // use sessionStorage
 
   if (!formCompleted) {
     return <Navigate to="/" replace />;
@@ -55,10 +56,9 @@ const ProtectedDisclaimer = ({ children }) => {
 function App() {
   return (
     <Router>
-      {/* ✅ Router wraps everything FIRST */}
       <Layout>
         <Routes>
-          <Route path="/" element={<UserForm />} />
+          <Route path="/" element={<UserForm />} /> {/* ✅ fixed route */}
           <Route
             path="/disclaimer"
             element={
@@ -69,9 +69,8 @@ function App() {
           />
           <Route path="/assessment" element={<Assessment />} />
           <Route path="/evaluation" element={<Evaluation />} />
-          <Route path="/download-report" element={<DownloadReport />} /> {/* ✅ */}
+          <Route path="/download-report" element={<DownloadReport />} />
           <Route path="/thankyou" element={<ThankYou />} />
-          {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>
