@@ -10,11 +10,10 @@ import UserForm from "./pages/UserForm";
 import Assessment from "./pages/Assessment";
 import Disclaimer from "./pages/Disclaimer";
 import Evaluation from "./pages/Evaluation";
-import DownloadReport from "./pages/DownloadReport";
+import DownloadReport from "./pages/DownloadReport"; // ✅ New import
 import ThankYou from "./pages/ThankYou";
 import Sidebar from "./components/Sidebar";
 
-// ✅ Layout with sidebar logic
 const Layout = ({ children }) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -43,10 +42,12 @@ const Layout = ({ children }) => {
   );
 };
 
-// ✅ Protect disclaimer if form not filled
+// Protect /disclaimer route
 const ProtectedDisclaimer = ({ children }) => {
   const formCompleted = localStorage.getItem("formCompleted") === "true";
+
   if (!formCompleted) {
+    // Redirect to home if form not completed
     return <Navigate to="/" replace />;
   }
   return children;
@@ -55,13 +56,10 @@ const ProtectedDisclaimer = ({ children }) => {
 function App() {
   return (
     <Router>
-      <Routes>
-        {/* Wrap all routes inside Layout */}
-        <Route element={<Layout />}>
-          {/* Step 1: User Form */}
+      <Layout>
+        <Routes>
+          {/* Start with UserDetailsForm */}
           <Route path="/" element={<UserForm />} />
-
-          {/* Step 2: Disclaimer (protected by form completion) */}
           <Route
             path="/disclaimer"
             element={
@@ -70,23 +68,14 @@ function App() {
               </ProtectedDisclaimer>
             }
           />
-
-          {/* Step 3: Assessment */}
           <Route path="/assessment" element={<Assessment />} />
-
-          {/* Step 4: Evaluation */}
           <Route path="/evaluation" element={<Evaluation />} />
-
-          {/* Step 5: Download Report */}
-          <Route path="/download-report" element={<DownloadReport />} />
-
-          {/* Step 6: Thank You */}
+          <Route path="/download-report" element={<DownloadReport />} /> {/* ✅ New route */}
           <Route path="/thankyou" element={<ThankYou />} />
-
-          {/* Catch-all → redirect to form */}
+          {/* If route not found, redirect to home */}
           <Route path="*" element={<Navigate to="/" />} />
-        </Route>
-      </Routes>
+        </Routes>
+      </Layout>
     </Router>
   );
 }

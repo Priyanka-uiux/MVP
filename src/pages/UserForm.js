@@ -13,7 +13,6 @@ export default function UserDetailsForm() {
   });
 
   const [errors, setErrors] = useState({});
-  const [submitting, setSubmitting] = useState(false);
 
   const validate = () => {
     let newErrors = {};
@@ -23,8 +22,7 @@ export default function UserDetailsForm() {
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    if (!formData.organisation.trim())
-      newErrors.organisation = "Organisation is required";
+    if (!formData.organisation.trim()) newErrors.organisation = "Organisation is required";
     return newErrors;
   };
 
@@ -41,9 +39,8 @@ export default function UserDetailsForm() {
       return;
     }
 
-    setSubmitting(true); // Disable button while submitting
-
     try {
+      // Send to Formspree
       const res = await fetch("https://formspree.io/f/xzzvyqwa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -55,24 +52,23 @@ export default function UserDetailsForm() {
       }
 
       // Save data locally
-      localStorage.setItem("userData", JSON.stringify(formData));
-      localStorage.setItem("formCompleted", "true");
+      sessionStorage.setItem("userData", JSON.stringify(formData));
+      sessionStorage.setItem("formCompleted", "true");
 
-      // Navigate to disclaimer page
+      // Go to disclaimer every time after form
       navigate("/disclaimer");
+
     } catch (err) {
       console.error(err);
       alert("Error submitting form. Please try again.");
-    } finally {
-      setSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#080029] flex flex-col items-center justify-start">
+    <div className="min-h-screen bg-[#080029]">
       <img src={logo} alt="Logo" className="w-[250px] p-5" />
-      <div className="flex flex-col gap-[30px] items-center justify-center py-5 w-full md:w-[60%]">
-        <div className="border-[#33cae5] border-[2px] p-8 shadow-lg rounded-[30px] bg-white w-full">
+      <div className="flex flex-col gap-[30px] items-center justify-center py-5">
+        <div className="border-[#33cae5] border-[2px] w-[100%] md:w-[60%] p-8 shadow-lg rounded-[30px] bg-white">
           <h1 className="text-[50px] font-bold text-[#33cae5] text-center mb-1">
             Welcome to EthiAI
           </h1>
@@ -87,10 +83,10 @@ export default function UserDetailsForm() {
               <input
                 type="text"
                 name="name"
+                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your full name"
-                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
               />
               {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
             </div>
@@ -101,10 +97,10 @@ export default function UserDetailsForm() {
               <input
                 type="email"
                 name="email"
+                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
               />
               {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
             </div>
@@ -115,10 +111,10 @@ export default function UserDetailsForm() {
               <input
                 type="text"
                 name="organisation"
+                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
                 value={formData.organisation}
                 onChange={handleChange}
                 placeholder="Enter your organisation name"
-                className="w-full border border-gray-300 p-3 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:border-[#33cae5]"
               />
               {errors.organisation && <p className="text-red-500 text-sm">{errors.organisation}</p>}
             </div>
@@ -127,10 +123,9 @@ export default function UserDetailsForm() {
             <div className="flex justify-center">
               <button
                 type="submit"
-                disabled={submitting}
-                className="border-2 border-[#33cae5] text-white bg-[#33cae5] py-3 px-6 rounded-lg hover:!text-[#080029] hover:!bg-white hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-50"
+                className="border-2 border-[#33cae5] text-white bg-[#33cae5] py-3 px-6 rounded-lg hover:!text-[#080029] hover:!bg-white hover:shadow-lg hover:scale-105 transition-all duration-300"
               >
-                {submitting ? "Submitting..." : "Submit & Continue"}
+                Submit & Continue
               </button>
             </div>
           </form>
