@@ -13,7 +13,7 @@ const DownloadReport = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { riskScore, quizLength, allComments } = location.state || {};
-  //const [previewUrl, setPreviewUrl] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const percentage = Math.round((riskScore / Math.max(quizLength, 1)) * 100);
 
@@ -38,9 +38,7 @@ const DownloadReport = () => {
       const pdfWidth = doc.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-      if (i > 0) {
-        doc.addPage();
-      }
+      if (i > 0) doc.addPage();
       doc.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
     }
 
@@ -63,7 +61,7 @@ const DownloadReport = () => {
     textAlign: "justify",
   };
 
-  // --- Helper: measure height of text dynamically ---
+  // Measure text height dynamically
   const measureTextHeight = (text, fontSize = 16, maxWidth = 700) => {
     const temp = document.createElement("div");
     temp.style.position = "absolute";
@@ -79,7 +77,7 @@ const DownloadReport = () => {
     return height;
   };
 
-  // --- Render comment pages dynamically without overflow ---
+  // Render comments with dynamic pagination
   const renderCommentPages = (comments) => {
     if (!comments || comments.length === 0) {
       return (
@@ -117,29 +115,24 @@ const DownloadReport = () => {
     while (remainingComments.length > 0) {
       let pageComments = [];
       let usedHeight = 0;
-      const MAX_PAGE_HEIGHT =  1000;
+      const MAX_PAGE_HEIGHT = 1000;
 
-      // First page reserves extra space for the Gauge chart + heading
-      if (pageIndex === 0) {
-        usedHeight += 400;
-      }
+      // First page reserves extra space for chart
+      if (pageIndex === 0) usedHeight += 400;
 
       for (let i = 0; i < remainingComments.length; i++) {
         const comment = remainingComments[i];
         const commentHeight = measureTextHeight(comment);
 
-        if (usedHeight + commentHeight > MAX_PAGE_HEIGHT) {
-          break;
-        }
+        if (usedHeight + commentHeight > MAX_PAGE_HEIGHT) break;
 
         pageComments.push(comment);
         usedHeight += commentHeight;
       }
 
-      // Slice used comments
+      // Remove used comments
       remainingComments = remainingComments.slice(pageComments.length);
 
-      // Build the page
       pages.push(
         <div
           key={`comments-page-${pageIndex}`}
@@ -197,8 +190,7 @@ const DownloadReport = () => {
                   fontWeight: "bold",
                   borderBottom: "2px solid #00BFFF",
                   paddingBottom: "6px",
-                  marginBottom: "20px",
-                  marginTop: "30px",
+                  margin: "30px 0 20px",
                 }}
               >
                 GAPS AND RECOMMENDATIONS
@@ -215,7 +207,7 @@ const DownloadReport = () => {
                 marginBottom: "20px",
               }}
             >
-              GAPS AND RECOMMENDATIONS(Continued)
+              GAPS AND RECOMMENDATIONS (Continued)
             </h2>
           )}
 
@@ -223,16 +215,19 @@ const DownloadReport = () => {
             style={{
               paddingLeft: "20px",
               paddingRight: "20px",
-              listStyleType: "none", // <--- Changed from "disc" to "none"
+              listStyleType: "none",
               lineHeight: "1.8",
               textAlign: "justify",
               fontSize: "16px",
             }}
           >
             {pageComments.map((comment, index) => (
-              <li key={index} style={{ marginBottom: "10px", display: "flex", gap: "10px" }}>
-                <span style={{flexShrink: 0}}>•</span>  {/* <--- Added custom bullet point */}
-                <span>{comment}</span> {/* <--- Wrapped comment in a span */}
+              <li
+                key={index}
+                style={{ marginBottom: "10px", display: "flex", gap: "10px" }}
+              >
+                <span style={{ flexShrink: 0 }}>•</span>
+                <span>{comment}</span>
               </li>
             ))}
           </ul>
@@ -264,14 +259,15 @@ const DownloadReport = () => {
           </button>
         </div>
         <h1 className="text-xl font-bold mb-4">Download Report Preview</h1>
+
         <div className="space-y-8 flex flex-col items-center">
-          {/* Page 1 – Cover */}
+          {/* Cover Page */}
           <table className="w-[210mm] h-[297mm] bg-[#080029] border-collapse text-content pdf-page">
             <tbody>
               <tr>
                 <td className="relative p-10" colSpan={2}>
                   <div className="absolute top-0 left-[50px] flex items-start gap-4">
-                    <div className="w-[70px] h-[250px] bg-[#33cae5]"></div>
+                    <div className="w-[70px] h-[250px] bg-[#33cae5]" />
                     <div className="w-[250px] mt-5">
                       <img className="w-full h-full" src={logo} alt="logo" />
                     </div>
@@ -290,7 +286,7 @@ const DownloadReport = () => {
             </tbody>
           </table>
 
-          {/* Page 2 – Table of Contents */}
+          {/* Table of Contents */}
           <div
             className="pdf-page"
             style={{
@@ -343,7 +339,7 @@ const DownloadReport = () => {
             </ul>
           </div>
 
-          {/* Page 3 – Executive Summary */}
+          {/* Executive Summary */}
           <div
             className="pdf-page"
             style={{
@@ -393,38 +389,34 @@ const DownloadReport = () => {
                 paddingRight: "10px",
                 fontSize: "16px",
                 lineHeight: "1.8",
-                listStyleType: "none", // <--- Changed from "disc" to "none"
+                listStyleType: "none",
                 textAlign: "justify",
               }}
             >
-              <li style={{marginBottom: "10px", display: "flex", gap: "10px"}}>
-                <span style={{flexShrink: 0}}>•</span>
-                <span>
-                  Compliance Standing Reports to help businesses understand their
-                  risk level and legal obligations.
-                </span>
-              </li>
-              <li style={{marginBottom: "10px", display: "flex", gap: "10px"}}>
-                <span style={{flexShrink: 0}}>•</span>
-                <span>
-                  Actionable Recommendations to guide AI providers and deployers
-                  toward regulatory compliance.
-                </span>
-              </li>
-              <li style={{marginBottom: "10px", display: "flex", gap: "10px"}}>
-                <span style={{flexShrink: 0}}>•</span>
-                <span>
-                  Comprehensive Compliance Dashboard offering real-time insights
-                  into AI risk levels.
-                </span>
-              </li>
+              {[
+                "Compliance Standing Reports to help businesses understand their risk level and legal obligations.",
+                "Actionable Recommendations to guide AI providers and deployers toward regulatory compliance.",
+                "Comprehensive Compliance Dashboard offering real-time insights into AI risk levels.",
+              ].map((text, i) => (
+                <li
+                  key={i}
+                  style={{
+                    marginBottom: "10px",
+                    display: "flex",
+                    gap: "10px",
+                  }}
+                >
+                  <span style={{ flexShrink: 0 }}>•</span>
+                  <span>{text}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Gaps & Recommendations Pages */}
+          {/* Gaps & Recommendations */}
           {renderCommentPages(allComments)}
 
-          {/* Merits Page */}
+          {/* Merits */}
           <div
             className="pdf-page"
             style={{
@@ -454,20 +446,22 @@ const DownloadReport = () => {
                 paddingRight: "20px",
                 fontSize: "16px",
                 lineHeight: "1.8",
-                listStyleType: "none", // <--- Changed from "disc" to "none"
+                listStyleType: "none",
                 textAlign: "justify",
               }}
             >
-              <li style={{marginBottom: "10px", display: "flex", gap: "10px"}}>
-                <span style={{flexShrink: 0}}>•</span>
+              <li
+                style={{ marginBottom: "10px", display: "flex", gap: "10px" }}
+              >
+                <span style={{ flexShrink: 0 }}>•</span>
                 <span>
-                   No merits were identified based on the selected responses.
+                  No merits were identified based on the selected responses.
                 </span>
-            </li>
+              </li>
             </ul>
           </div>
 
-          {/* Conclusion Page */}
+          {/* Conclusion */}
           <div
             className="pdf-page"
             style={{
