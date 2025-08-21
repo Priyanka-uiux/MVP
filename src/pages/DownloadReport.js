@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import logo from "../assets/images/logo.png";
 import GaugeChart from "react-gauge-chart";
@@ -13,7 +13,6 @@ const DownloadReport = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { riskScore, quizLength, allComments } = location.state || {};
-  const [previewUrl, setPreviewUrl] = useState(null);
 
   const percentage = Math.round((riskScore / Math.max(quizLength, 1)) * 100);
 
@@ -48,13 +47,7 @@ const DownloadReport = () => {
   };
 
   useEffect(() => {
-    const generatePreview = async () => {
-      const firstPage = document.querySelector(".pdf-page");
-      if (!firstPage) return;
-      const canvas = await html2canvas(firstPage, { scale: 2 });
-      setPreviewUrl(canvas.toDataURL("image/png"));
-    };
-    generatePreview();
+    // Preview generation was here but removed because previewUrl wasn’t used
   }, []);
 
   const paragraphStyle = {
@@ -117,7 +110,7 @@ const DownloadReport = () => {
     while (remainingComments.length > 0) {
       let pageComments = [];
       let usedHeight = 0;
-      const MAX_PAGE_HEIGHT =  1000;
+      const MAX_PAGE_HEIGHT = 1000;
 
       // First page reserves extra space for the Gauge chart + heading
       if (pageIndex === 0) {
@@ -223,16 +216,19 @@ const DownloadReport = () => {
             style={{
               paddingLeft: "20px",
               paddingRight: "20px",
-              listStyleType: "none", // <--- Changed from "disc" to "none"
+              listStyleType: "none",
               lineHeight: "1.8",
               textAlign: "justify",
               fontSize: "16px",
             }}
           >
             {pageComments.map((comment, index) => (
-              <li key={index} style={{ marginBottom: "10px", display: "flex", gap: "10px" }}>
-                <span style={{flexShrink: 0}}>•</span>  {/* <--- Added custom bullet point */}
-                <span>{comment}</span> {/* <--- Wrapped comment in a span */}
+              <li
+                key={index}
+                style={{ marginBottom: "10px", display: "flex", gap: "10px" }}
+              >
+                <span style={{ flexShrink: 0 }}>•</span>
+                <span>{comment}</span>
               </li>
             ))}
           </ul>
@@ -393,26 +389,44 @@ const DownloadReport = () => {
                 paddingRight: "10px",
                 fontSize: "16px",
                 lineHeight: "1.8",
-                listStyleType: "none", // <--- Changed from "disc" to "none"
+                listStyleType: "none",
                 textAlign: "justify",
               }}
             >
-              <li style={{marginBottom: "10px", display: "flex", gap: "10px"}}>
-                <span style={{flexShrink: 0}}>•</span>
+              <li
+                style={{
+                  marginBottom: "10px",
+                  display: "flex",
+                  gap: "10px",
+                }}
+              >
+                <span style={{ flexShrink: 0 }}>•</span>
                 <span>
                   Compliance Standing Reports to help businesses understand their
                   risk level and legal obligations.
                 </span>
               </li>
-              <li style={{marginBottom: "10px", display: "flex", gap: "10px"}}>
-                <span style={{flexShrink: 0}}>•</span>
+              <li
+                style={{
+                  marginBottom: "10px",
+                  display: "flex",
+                  gap: "10px",
+                }}
+              >
+                <span style={{ flexShrink: 0 }}>•</span>
                 <span>
                   Actionable Recommendations to guide AI providers and deployers
                   toward regulatory compliance.
                 </span>
               </li>
-              <li style={{marginBottom: "10px", display: "flex", gap: "10px"}}>
-                <span style={{flexShrink: 0}}>•</span>
+              <li
+                style={{
+                  marginBottom: "10px",
+                  display: "flex",
+                  gap: "10px",
+                }}
+              >
+                <span style={{ flexShrink: 0 }}>•</span>
                 <span>
                   Comprehensive Compliance Dashboard offering real-time insights
                   into AI risk levels.
@@ -454,16 +468,22 @@ const DownloadReport = () => {
                 paddingRight: "20px",
                 fontSize: "16px",
                 lineHeight: "1.8",
-                listStyleType: "none", // <--- Changed from "disc" to "none"
+                listStyleType: "none",
                 textAlign: "justify",
               }}
             >
-              <li style={{marginBottom: "10px", display: "flex", gap: "10px"}}>
-                <span style={{flexShrink: 0}}>•</span>
+              <li
+                style={{
+                  marginBottom: "10px",
+                  display: "flex",
+                  gap: "10px",
+                }}
+              >
+                <span style={{ flexShrink: 0 }}>•</span>
                 <span>
-                   No merits were identified based on the selected responses.
+                  No merits were identified based on the selected responses.
                 </span>
-            </li>
+              </li>
             </ul>
           </div>
 
