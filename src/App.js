@@ -55,8 +55,9 @@ const ProtectedDisclaimer = ({ children }) => {
 function App() {
   return (
     <Router>
-      <Layout>
-        <Routes>
+      <Routes>
+        {/* Wrap all routes inside Layout */}
+        <Route element={<Layout />}>
           {/* Step 1: User Form */}
           <Route path="/" element={<UserForm />} />
 
@@ -84,8 +85,8 @@ function App() {
 
           {/* Catch-all → redirect to form */}
           <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Layout>
+        </Route>
+      </Routes>
     </Router>
   );
 }
