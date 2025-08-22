@@ -58,14 +58,14 @@ const DownloadReport = () => {
     paddingRight: "10px",
   };
 
-  // Split Gaps & Recommendations into extra pages (without header)
+  // Split Gaps & Recommendations into continuation pages (7 per page)
   const renderExtraCommentPages = (comments) => {
     const items =
       comments?.length > 0
         ? comments
         : ["No high-risk issues identified in your responses."];
 
-    const itemsPerPage = 14;
+    const itemsPerPage = 7;
     const extraPages = [];
 
     if (items.length > itemsPerPage) {
@@ -73,7 +73,7 @@ const DownloadReport = () => {
         const chunk = items.slice(i, i + itemsPerPage);
         extraPages.push(
           <div
-            key={i}
+            key={`gaps-page-${i}`}
             className="pdf-page"
             style={{
               width: `${A4_WIDTH}px`,
@@ -83,6 +83,18 @@ const DownloadReport = () => {
               color: "#ffffff",
             }}
           >
+            <h2
+              style={{
+                color: "#00BFFF",
+                fontSize: "22px",
+                fontWeight: "bold",
+                borderBottom: "2px solid #00BFFF",
+                paddingBottom: "6px",
+                marginBottom: "20px",
+              }}
+            >
+              GAPS & RECOMMENDATIONS – CONTINUED
+            </h2>
             <ul
               style={{
                 fontSize: "16px",
@@ -96,7 +108,11 @@ const DownloadReport = () => {
               {chunk.map((c, j) => (
                 <li
                   key={j}
-                  style={{ marginBottom: "10px", display: "flex", gap: "10px" }}
+                  style={{
+                    marginBottom: "10px",
+                    display: "flex",
+                    gap: "10px",
+                  }}
                 >
                   <span style={{ flexShrink: 0 }}>•</span>
                   <span>{c}</span>
@@ -363,7 +379,7 @@ const DownloadReport = () => {
                 ? allComments
                 : ["No high-risk issues identified in your responses."]
               )
-                .slice(0, 14)
+                .slice(0, 7) // ✅ First 7 only
                 .map((c, i) => (
                   <li
                     key={i}
