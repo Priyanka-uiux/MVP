@@ -49,28 +49,65 @@ const DownloadReport = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const pageStyle = {
-    width: `${A4_WIDTH}px`,
-    height: `${A4_HEIGHT}px`,
-    padding: "50px",
-    backgroundColor: "#080029",
-    color: "#ffffff",
-  };
-
-  const headingStyle = {
-    color: "#00BFFF",
-    fontSize: "24px",
-    fontWeight: "bold",
-    borderBottom: "2px solid #00BFFF",
-    paddingBottom: "8px",
-    marginBottom: "24px",
-  };
-
   const paragraphStyle = {
-    fontSize: "18px",
-    lineHeight: "1.9",
+    fontSize: "16px",
+    lineHeight: "1.8",
     textAlign: "justify",
-    marginBottom: "20px",
+    marginBottom: "16px",
+    paddingLeft: "20px",
+    paddingRight: "10px",
+  };
+
+  // Split Gaps & Recommendations into extra pages (without header)
+  const renderExtraCommentPages = (comments) => {
+    const items =
+      comments?.length > 0
+        ? comments
+        : ["No high-risk issues identified in your responses."];
+
+    const itemsPerPage = 14;
+    const extraPages = [];
+
+    if (items.length > itemsPerPage) {
+      for (let i = itemsPerPage; i < items.length; i += itemsPerPage) {
+        const chunk = items.slice(i, i + itemsPerPage);
+        extraPages.push(
+          <div
+            key={i}
+            className="pdf-page"
+            style={{
+              width: `${A4_WIDTH}px`,
+              height: `${A4_HEIGHT}px`,
+              padding: "40px",
+              backgroundColor: "#080029",
+              color: "#ffffff",
+            }}
+          >
+            <ul
+              style={{
+                fontSize: "16px",
+                lineHeight: "1.8",
+                listStyleType: "none",
+                paddingLeft: "20px",
+                paddingRight: "20px",
+                textAlign: "justify",
+              }}
+            >
+              {chunk.map((c, j) => (
+                <li
+                  key={j}
+                  style={{ marginBottom: "10px", display: "flex", gap: "10px" }}
+                >
+                  <span style={{ flexShrink: 0 }}>•</span>
+                  <span>{c}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      }
+    }
+    return extraPages;
   };
 
   return (
@@ -104,65 +141,76 @@ const DownloadReport = () => {
 
         {/* PDF Pages */}
         <div className="space-y-8 flex flex-col items-center">
-          {/* -------- Cover Page -------- */}
-<div className="pdf-page shadow-lg" style={pageStyle}>
-  <div className="relative w-full h-full flex flex-col justify-center items-center">
-    {/* Left cyan bar + logo */}
-    <div className="absolute top-20 left-16 flex items-start gap-4">
-      <div style={{ width: "70px", height: "250px", backgroundColor: "#33cae5" }}></div>
-      <div style={{ width: "250px", marginTop: "20px" }}>
-        <img src={logo} alt="Logo" className="w-full h-auto" />
-      </div>
-    </div>
+          {/* Page 1 – Cover */}
+          <table className="w-[210mm] h-[297mm] bg-[#080029] border-collapse text-content pdf-page">
+            <tbody>
+              <tr>
+                <td className="relative p-10" colSpan={2}>
+                  <div className="absolute top-0 left-[50px] flex items-start gap-4">
+                    <div className="w-[70px] h-[250px] bg-[#33cae5]"></div>
+                    <div className="w-[250px] mt-5">
+                      <img className="w-full h-full" src={logo} alt="logo" />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={2} className="h-full text-center align-middle">
+                  <div className="border-t-2 border-b-2 border-white py-5">
+                    <h1 className="text-[75px] text-white font-light leading-snug">
+                      COMPLIANCE RISK <br /> REPORT
+                    </h1>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-    {/* Title Section */}
-    <div className="text-center mt-40 w-full">
-      <div
-        style={{
-          borderTop: "2px solid white",
-          borderBottom: "2px solid white",
-          padding: "40px 0",
-          margin: "0 100px",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "55px",
-            fontWeight: "bold",
-            color: "white",
-            letterSpacing: "2px",
-            lineHeight: "1.3",
-          }}
-        >
-          COMPLIANCE RISK <br /> REPORT
-        </h1>
-      </div>
-
-      {/* Date */}
-      <p style={{ fontSize: "22px", color: "white", marginTop: "40px" }}>
-        Generated on {new Date().toLocaleDateString()}
-      </p>
-    </div>
-  </div>
-</div>
-
-
-          {/* Table of Contents */}
-          <div className="pdf-page shadow-lg" style={pageStyle}>
-            <h2 style={headingStyle}>TABLE OF CONTENTS</h2>
-            <ul style={{ listStyleType: "none", padding: 0, fontSize: "20px" }}>
+          {/* Page 2 – Table of Contents */}
+          <div
+            className="pdf-page"
+            style={{
+              width: `${A4_WIDTH}px`,
+              height: `${A4_HEIGHT}px`,
+              padding: "40px",
+              backgroundColor: "#080029",
+              color: "#ffffff",
+            }}
+          >
+            <h2
+              style={{
+                color: "#00BFFF",
+                fontSize: "24px",
+                fontWeight: "bold",
+                borderBottom: "2px solid #00BFFF",
+                paddingBottom: "6px",
+                marginBottom: "20px",
+              }}
+            >
+              TABLE OF CONTENTS
+            </h2>
+            <ul
+              style={{
+                listStyleType: "none",
+                paddingLeft: "20px",
+                paddingRight: "30px",
+                fontSize: "18px",
+                lineHeight: "2",
+                margin: 0,
+              }}
+            >
               {[
                 "Executive Summary",
                 "Overall EthiAI Risk Score",
                 "Gaps & Recommendations",
                 "Merits",
                 "Conclusion",
-              ].map((item, idx) => (
+              ].map((item, index) => (
                 <li
-                  key={idx}
+                  key={index}
                   style={{
                     borderBottom: "1px solid #ccc",
-                    padding: "12px 0",
+                    padding: "5px 0",
                   }}
                 >
                   {item}
@@ -171,28 +219,97 @@ const DownloadReport = () => {
             </ul>
           </div>
 
-          {/* Executive Summary */}
-          <div className="pdf-page shadow-lg" style={pageStyle}>
-            <h2 style={headingStyle}>EXECUTIVE SUMMARY</h2>
+          {/* Page 3 – Executive Summary */}
+          <div
+            className="pdf-page"
+            style={{
+              width: `${A4_WIDTH}px`,
+              height: `${A4_HEIGHT}px`,
+              padding: "40px",
+              backgroundColor: "#080029",
+              color: "#ffffff",
+            }}
+          >
+            <h2
+              style={{
+                color: "#00BFFF",
+                fontSize: "24px",
+                fontWeight: "bold",
+                borderBottom: "2px solid #00BFFF",
+                paddingBottom: "6px",
+                marginBottom: "20px",
+              }}
+            >
+              EXECUTIVE SUMMARY
+            </h2>
             {[
               "The EU AI Act is the world’s first AI regulation, designed to ensure AI systems deployed within the European Union are ethical, safe, and compliant with fundamental rights.",
               "It categorizes AI systems into risk levels (prohibited, high-risk, limited risk, and minimal risk) and imposes obligations accordingly.",
               "The act applies to providers, deployers, and users of AI systems operating within the EU or impacting EU citizens.",
               "The EU AI Act classifies AI systems based on their risk levels, ranging from minimal risk to prohibited practices that pose severe threats to human rights and safety. The Act applies to organizations developing, deploying, or using AI systems within the EU.",
               "EthiAI, developed by RisKey, evaluates AI compliance risks under the EU AI Act. The platform provides organizations with tools to assess:",
-            ].map((t, i) => (
-              <p key={i} style={paragraphStyle}>{t}</p>
+            ].map((text, i) => (
+              <p key={i} style={paragraphStyle}>
+                {text}
+              </p>
             ))}
-            <ul style={{ ...paragraphStyle, listStyleType: "disc", paddingLeft: "35px" }}>
-              <li>Compliance Standing Reports to help businesses understand their risk level and legal obligations.</li>
-              <li>Actionable Recommendations to guide AI providers and deployers toward regulatory compliance.</li>
-              <li>Comprehensive Compliance Dashboard offering real-time insights into AI risk levels.</li>
+            <ul
+              style={{
+                paddingLeft: "30px",
+                paddingRight: "10px",
+                fontSize: "16px",
+                lineHeight: "1.8",
+                listStyleType: "none",
+                textAlign: "justify",
+              }}
+            >
+              <li style={{ marginBottom: "10px", display: "flex", gap: "10px" }}>
+                <span style={{ flexShrink: 0 }}>•</span>
+                <span>
+                  Compliance Standing Reports to help businesses understand their
+                  risk level and legal obligations.
+                </span>
+              </li>
+              <li style={{ marginBottom: "10px", display: "flex", gap: "10px" }}>
+                <span style={{ flexShrink: 0 }}>•</span>
+                <span>
+                  Actionable Recommendations to guide AI providers and deployers
+                  toward regulatory compliance.
+                </span>
+              </li>
+              <li style={{ marginBottom: "10px", display: "flex", gap: "10px" }}>
+                <span style={{ flexShrink: 0 }}>•</span>
+                <span>
+                  Comprehensive Compliance Dashboard offering real-time insights
+                  into AI risk levels.
+                </span>
+              </li>
             </ul>
           </div>
 
-          {/* Risk Score + Recommendations */}
-          <div className="pdf-page shadow-lg" style={pageStyle}>
-            <h2 style={headingStyle}>OVERALL ETHIAI RISK SCORE</h2>
+          {/* Risk Score + Gaps (first page) */}
+          <div
+            className="pdf-page"
+            style={{
+              width: `${A4_WIDTH}px`,
+              height: `${A4_HEIGHT}px`,
+              padding: "40px",
+              backgroundColor: "#080029",
+              color: "#ffffff",
+            }}
+          >
+            <h2
+              style={{
+                color: "#00BFFF",
+                fontSize: "22px",
+                fontWeight: "bold",
+                borderBottom: "2px solid #00BFFF",
+                paddingBottom: "6px",
+                marginBottom: "20px",
+              }}
+            >
+              OVERALL ETHIAI RISK SCORE
+            </h2>
             <div ref={chartRef} style={{ width: "340px", margin: "auto" }}>
               <GaugeChart
                 id="gauge-chart"
@@ -204,39 +321,139 @@ const DownloadReport = () => {
                 arcPadding={0.02}
               />
             </div>
-            <p style={{ fontSize: "20px", marginTop: "20px", textAlign: "center", fontWeight: "bold" }}>
+            <p
+              style={{
+                fontSize: "18px",
+                marginTop: "20px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
               Total Risk Score: {percentage}%
             </p>
-            <p style={{ fontSize: "18px", textAlign: "center" }}>
+            <p style={{ fontSize: "16px", textAlign: "center" }}>
               Risk Level: {getRiskLevel()}
             </p>
 
-            <h2 style={{ ...headingStyle, marginTop: "50px" }}>
+            {/* Gaps start here */}
+            <h2
+              style={{
+                color: "#00BFFF",
+                fontSize: "22px",
+                fontWeight: "bold",
+                borderBottom: "2px solid #00BFFF",
+                paddingBottom: "6px",
+                marginTop: "40px",
+                marginBottom: "20px",
+              }}
+            >
               GAPS & RECOMMENDATIONS
             </h2>
-            <ul style={{ ...paragraphStyle, listStyleType: "disc", paddingLeft: "35px" }}>
-              {allComments?.length > 0 ? (
-                allComments.map((c, i) => <li key={i}>{c}</li>)
-              ) : (
-                <li>No high-risk issues identified in your responses.</li>
-              )}
+            <ul
+              style={{
+                fontSize: "16px",
+                lineHeight: "1.8",
+                listStyleType: "none",
+                paddingLeft: "20px",
+                paddingRight: "20px",
+                textAlign: "justify",
+              }}
+            >
+              {(allComments?.length > 0
+                ? allComments
+                : ["No high-risk issues identified in your responses."]
+              )
+                .slice(0, 14)
+                .map((c, i) => (
+                  <li
+                    key={i}
+                    style={{
+                      marginBottom: "10px",
+                      display: "flex",
+                      gap: "10px",
+                    }}
+                  >
+                    <span style={{ flexShrink: 0 }}>•</span>
+                    <span>{c}</span>
+                  </li>
+                ))}
             </ul>
           </div>
 
-          {/* Merits */}
-          <div className="pdf-page shadow-lg" style={pageStyle}>
-            <h2 style={headingStyle}>MERITS</h2>
-            <ul style={{ ...paragraphStyle, listStyleType: "disc", paddingLeft: "35px" }}>
-              <li>No merits were identified based on the selected responses.</li>
+          {/* Extra Gaps pages if needed */}
+          {renderExtraCommentPages(allComments)}
+
+          {/* Merits Page */}
+          <div
+            className="pdf-page"
+            style={{
+              width: `${A4_WIDTH}px`,
+              height: `${A4_HEIGHT}px`,
+              padding: "40px",
+              backgroundColor: "#080029",
+              color: "#ffffff",
+            }}
+          >
+            <h2
+              style={{
+                color: "#00BFFF",
+                fontSize: "20px",
+                fontWeight: "bold",
+                borderBottom: "2px solid #00BFFF",
+                paddingBottom: "6px",
+                marginBottom: "20px",
+              }}
+            >
+              MERITS
+            </h2>
+            <ul
+              style={{
+                paddingLeft: "20px",
+                paddingRight: "20px",
+                fontSize: "16px",
+                lineHeight: "1.8",
+                listStyleType: "none",
+                textAlign: "justify",
+              }}
+            >
+              <li
+                style={{ marginBottom: "10px", display: "flex", gap: "10px" }}
+              >
+                <span style={{ flexShrink: 0 }}>•</span>
+                <span>
+                  No merits were identified based on the selected responses.
+                </span>
+              </li>
             </ul>
           </div>
 
-          {/* Conclusion */}
-          <div className="pdf-page shadow-lg" style={pageStyle}>
-            <h2 style={headingStyle}>CONCLUSION</h2>
+          {/* Conclusion Page */}
+          <div
+            className="pdf-page"
+            style={{
+              width: `${A4_WIDTH}px`,
+              height: `${A4_HEIGHT}px`,
+              padding: "40px",
+              backgroundColor: "#080029",
+              color: "#ffffff",
+            }}
+          >
+            <h2
+              style={{
+                color: "#00BFFF",
+                fontSize: "20px",
+                fontWeight: "bold",
+                borderBottom: "2px solid #00BFFF",
+                paddingBottom: "6px",
+                marginBottom: "20px",
+              }}
+            >
+              CONCLUSION
+            </h2>
             <p style={paragraphStyle}>
-              Thank you for completing the EthiAI Compliance Report. We’re here to support you in transforming
-              your organization’s AI potential into actionable success. Our team of experts is ready to provide
+              Thank you for completing the EthiAI Compliance Report. We’re here
+              to support you in transforming your organization’s AI potential
+              into actionable success. Our team of experts is ready to provide
               guidance tailored to your needs.
             </p>
           </div>
