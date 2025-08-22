@@ -52,7 +52,7 @@ const DownloadReport = () => {
       const firstPage = document.querySelector(".pdf-page");
       if (!firstPage) return;
       const canvas = await html2canvas(firstPage, { scale: 2 });
-      setPreviewUrl(canvas.toDataURL("image/png"));
+      //setPreviewUrl(canvas.toDataURL("image/png"));
     };
     generatePreview();
   }, []);
